@@ -93,7 +93,7 @@ const Metro = (() => {
   };
   const SHIPPING = { fee: 100, freeFrom: 3500 };
   const MAX_QTY = 10;
-  const IMAGES = '../images/'; // every picture of the site lives in this one folder
+  const IMAGES = 'images/'; // every picture of the site lives in this one folder
   const INSTALLMENT_RATIO = 0.383;
   const KEYS = { cart: 'metro.cart', registry: 'metro.products', recent: 'metro.recent', wishlist: 'metro.wishlist' };
 
@@ -236,9 +236,9 @@ const Metro = (() => {
   }
 
   /* ---- horizontal rail (home page + product page) ---- */
-  function railHTML(inner, label) {
+  function  rrailHTML(inner, label) {
     return `<div class="rail" data-rail>
-      <button class="rail__btn rail__btn--prev" type="button" data-rail-prev aria-label="Previous ${esc(label)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="rail__btnail__btn--prev" type="button" data-rail-prev aria-label="Previous ${esc(label)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
       <div class="rail__track" data-rail-track>${inner}</div>
       <button class="rail__btn rail__btn--next" type="button" data-rail-next aria-label="Next ${esc(label)}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
     </div>`;
