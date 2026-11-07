@@ -85,25 +85,38 @@ const METRO_CATALOG = [
 const Metro = (() => {
   'use strict';
 
+  // Automatically detect whether we are in a subfolder or at the root
+  const isSubfolder = window.location.pathname.includes('/home/') || 
+                      window.location.pathname.includes('/productpage/') || 
+                      window.location.pathname.includes('/cartpage/') || 
+                      window.location.pathname.includes('/checkoutpage/') || 
+                      window.location.pathname.includes('/women/') || 
+                      window.location.pathname.includes('/men/') || 
+                      window.location.pathname.includes('/bag/') || 
+                      window.location.pathname.includes('/fragrance/') || 
+                      window.location.pathname.includes('/luxe-edition/') || 
+                      window.location.pathname.includes('/sale/') || 
+                      window.location.pathname.includes('/new-in/');
+
   const LINKS = {
-    home: '../home/homepage.html',
-    product: '../productpage/product.html',
-    cart: '../cartpage/cart.html',
-    checkout: '../checkoutpage/checkout.html',
+    home: isSubfolder ? '../home/homepage.html' : 'home/homepage.html',
+    product: isSubfolder ? '../productpage/product.html' : 'productpage/product.html',
+    cart: isSubfolder ? '../cartpage/cart.html' : 'cartpage/cart.html',
+    checkout: isSubfolder ? '../checkoutpage/checkout.html' : 'checkoutpage/checkout.html',
   };
   const SHIPPING = { fee: 100, freeFrom: 3500 };
   const MAX_QTY = 10;
-  const IMAGES = '../images/'; // every picture of the site lives in this one folder
+  const IMAGES = isSubfolder ? '../images/' : 'images/';
   const INSTALLMENT_RATIO = 0.383;
   const KEYS = { cart: 'metro.cart', registry: 'metro.products', recent: 'metro.recent', wishlist: 'metro.wishlist' };
 
   const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
   const CATEGORIES = {
-    women: { label: 'Women', url: '../women/women.html', audience: 'women', sizes: range(36, 41) },
-    men: { label: 'Men', url: '../men/men.html', audience: 'men', sizes: range(40, 45) },
-    bags: { label: 'Bags', url: '../bag/bag.html', audience: 'women', sizes: [] },
-    fragrance: { label: 'Fragrance', url: '../fragrance/fragrance.html', audience: '', sizes: [] },
-    luxe: { label: 'Luxe Edition', url: '../luxe-edition/luxe-edition.html', audience: 'women', sizes: range(36, 41) },
+    women: { label: 'Women', url: isSubfolder ? '../women/women.html' : 'women/women.html', audience: 'women', sizes: range(36, 41) },
+    men: { label: 'Men', url: isSubfolder ? '../men/men.html' : 'men/men.html', audience: 'men', sizes: range(40, 45) },
+    bags: { label: 'Bags', url: isSubfolder ? '../bag/bag.html' : 'bag/bag.html', audience: 'women', sizes: [] },
+    fragrance: { label: 'Fragrance', url: isSubfolder ? '../fragrance/fragrance.html' : 'fragrance/fragrance.html', audience: '', sizes: [] },
+    luxe: { label: 'Luxe Edition', url: isSubfolder ? '../luxe-edition/luxe-edition.html' : 'luxe-edition/luxe-edition.html', audience: 'women', sizes: range(36, 41) },
   };
 
   /* ---- tiny utilities ---- */
@@ -461,8 +474,8 @@ const Metro = (() => {
   };
   const SEARCH_LINKS = [
     ...Object.values(CATEGORIES),
-    { label: 'Sale', url: '../sale/sale.html' },
-    { label: 'New in', url: '../new-in/new-in.html' },
+    { label: 'Sale', url: isSubfolder ? '../sale/sale.html' : 'sale/sale.html' },
+    { label: 'New in', url: isSubfolder ? '../new-in/new-in.html' : 'new-in/new-in.html' },
   ];
   let catalog = null;
   const getCatalog = () => catalog || (catalog = METRO_CATALOG.map((raw) => product(raw)));
