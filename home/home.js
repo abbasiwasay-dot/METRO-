@@ -93,7 +93,7 @@ const Metro = (() => {
   };
   const SHIPPING = { fee: 100, freeFrom: 3500 };
   const MAX_QTY = 10;
-  const IMAGES = 'images/'; // every picture of the site lives in this one folder
+  const IMAGES = '../images/'; // every picture of the site lives in this one folder
   const INSTALLMENT_RATIO = 0.383;
   const KEYS = { cart: 'metro.cart', registry: 'metro.products', recent: 'metro.recent', wishlist: 'metro.wishlist' };
 
@@ -132,10 +132,6 @@ const Metro = (() => {
   };
 
   /* ---- products ---- */
-  /**
-   * Turn a raw product (see the data array in each page) into a full product.
-   * Image names in the data are turned into full paths inside the shared images folder.
-   */
   function product(raw) {
     const cat = CATEGORIES[raw.category];
     const colors = raw.colors.map((entry, i) => {
@@ -177,7 +173,6 @@ const Metro = (() => {
   const defaultColor = (p) => Math.max(0, p.colors.findIndex((c) => c.image === p.image));
   const productUrl = (p, color = 0) => `${LINKS.product}?id=${encodeURIComponent(p.id)}${color ? '&color=' + color : ''}`;
 
-  /** Remember products so product.html (a different folder) can look them up. */
   function register(list) {
     const all = read(KEYS.registry, {});
     list.forEach((p) => {
@@ -220,7 +215,6 @@ const Metro = (() => {
     </article>`;
   }
 
-  /** Colour swatches swap the card image and the link's ?color= */
   function bindCards(container, byId) {
     container.addEventListener('click', (event) => {
       const swatch = event.target.closest('.swatch');
@@ -236,9 +230,9 @@ const Metro = (() => {
   }
 
   /* ---- horizontal rail (home page + product page) ---- */
-  function  rrailHTML(inner, label) {
+  function railHTML(inner, label) {
     return `<div class="rail" data-rail>
-      <button class="rail__btnail__btn--prev" type="button" data-rail-prev aria-label="Previous ${esc(label)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
+      <button class="rail__btn rail__btn--prev" type="button" data-rail-prev aria-label="Previous ${esc(label)}"><i class="fa-solid fa-chevron-left" aria-hidden="true"></i></button>
       <div class="rail__track" data-rail-track>${inner}</div>
       <button class="rail__btn rail__btn--next" type="button" data-rail-next aria-label="Next ${esc(label)}"><i class="fa-solid fa-chevron-right" aria-hidden="true"></i></button>
     </div>`;
@@ -285,9 +279,8 @@ const Metro = (() => {
     }, 3000);
   }
 
-  /* ---- cart (items are snapshots, so cart/checkout need no catalog) ---- */
+  /* ---- cart ---- */
   const cart = {
-    // older saved carts may still hold the pre-reorganisation image path, so always re-point it to /images/
     items: () => read(KEYS.cart, []).filter((i) => i && i.qty > 0).map((i) => ({ ...i, image: IMAGES + String(i.image || '').split('/').pop() })),
     count: () => cart.items().reduce((sum, i) => sum + i.qty, 0),
     save(items) {
@@ -349,7 +342,7 @@ const Metro = (() => {
     },
   };
 
-  /* ---- wishlist (items are snapshots, so the drawer needs no catalog) ---- */
+  /* ---- wishlist ---- */
   const wishlist = {
     items: () =>
       read(KEYS.wishlist, [])
@@ -360,7 +353,6 @@ const Metro = (() => {
       write(KEYS.wishlist, items);
       syncWishlist();
     },
-    /** Add or remove a product; returns true when it is now on the wishlist. */
     toggle(p) {
       const items = wishlist.items();
       const index = items.findIndex((i) => i.id === p.id);
@@ -393,13 +385,11 @@ const Metro = (() => {
     if (icon) icon.className = (on ? 'fa-solid' : 'fa-regular') + ' fa-heart';
   }
 
-  /** The heart button shown on every product card. */
   function wishButton(p) {
     const on = wishlist.has(p.id);
     return `<button class="wish-btn" type="button" data-wish="${esc(p.id)}" aria-pressed="${on}" aria-label="${on ? 'Remove from wishlist' : 'Add to wishlist'}"><i class="${on ? 'fa-solid' : 'fa-regular'} fa-heart" aria-hidden="true"></i></button>`;
   }
 
-  /** Keep badge, hearts and drawer in step with the saved list. */
   function syncWishlist() {
     const items = wishlist.items();
     $$('[data-wish-count]').forEach((el) => {
@@ -464,7 +454,7 @@ const Metro = (() => {
     }
   }
 
-  /* ---- search (looks through every product of the site) ---- */
+  /* ---- search ---- */
   const SEARCH_ALIASES = {
     heels: 'shoes footwear', wedges: 'shoes footwear', slides: 'shoes footwear sandals chappal',
     footwear: 'shoes', clutches: 'bag bags purse', perfume: 'fragrance scent',
@@ -553,7 +543,7 @@ const Metro = (() => {
       panel.addEventListener('click', (e) => {
         const link = e.target.closest('[data-search-id]');
         const hit = link && searchHits.find((p) => p.id === link.dataset.searchId);
-        if (hit) register([hit]); // so the product page can find it
+        if (hit) register([hit]);
       });
     }
     panel.hidden = !open;
@@ -564,7 +554,7 @@ const Metro = (() => {
     }
   }
 
-  /* ---- header / footer behaviour (same markup on every page) ---- */
+  /* ---- header / footer behaviour ---- */
   function init() {
     const toggle = $('.nav-toggle');
     const nav = $('#site-nav');
@@ -605,7 +595,6 @@ const Metro = (() => {
       syncWishlist();
     });
 
-    /* header: search + wishlist */
     document.addEventListener('click', (e) => {
       const t = e.target;
       if (t.closest('[data-open-search]')) {
@@ -645,7 +634,6 @@ const Metro = (() => {
     });
   }
 
-  /* ---- listing pages: sort / layout / price filter / sale chips ---- */
   function listing(products) {
     const grid = $('#grid');
     const countEl = $('#count');
@@ -1160,4 +1148,3 @@ Metro.initRails();
 })();
 
 Metro.init();
-
