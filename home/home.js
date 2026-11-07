@@ -1,7 +1,6 @@
 /* ==========================================================================
    Metro — shared helpers (cart, product registry, cards, header/footer behaviour)
    ========================================================================== */
-/* ---- every product of the site, so search works from any page ---- */
 const METRO_CATALOG = [
   {"code":"10601259","type":"Heels","category":"women","price":1999,"discount":50,"image":"10601259_10_01.webp","hover":"s71.webp","colors":["10601259_10_01.webp","10601259_11_01.webp","10601259_30_01.webp"]},
   {"code":"10350841","type":"Wedges","category":"women","price":5999,"oldPrice":7499,"payNow":2300,"image":"l2.webp","hover":"s841.webp","colors":["l2.webp","l2-2.webp","l2-3.webp"]},
@@ -85,38 +84,28 @@ const METRO_CATALOG = [
 const Metro = (() => {
   'use strict';
 
-  // Automatically detect whether we are in a subfolder or at the root
-  const isSubfolder = window.location.pathname.includes('/home/') || 
-                      window.location.pathname.includes('/productpage/') || 
-                      window.location.pathname.includes('/cartpage/') || 
-                      window.location.pathname.includes('/checkoutpage/') || 
-                      window.location.pathname.includes('/women/') || 
-                      window.location.pathname.includes('/men/') || 
-                      window.location.pathname.includes('/bag/') || 
-                      window.location.pathname.includes('/fragrance/') || 
-                      window.location.pathname.includes('/luxe-edition/') || 
-                      window.location.pathname.includes('/sale/') || 
-                      window.location.pathname.includes('/new-in/');
-
+  // Base path detection for GitHub Pages vs Localhost
+  const repo = window.location.hostname.includes('github.io') ? '/METRO-' : '';
+  
   const LINKS = {
-    home: isSubfolder ? '../home/homepage.html' : 'home/homepage.html',
-    product: isSubfolder ? '../productpage/product.html' : 'productpage/product.html',
-    cart: isSubfolder ? '../cartpage/cart.html' : 'cartpage/cart.html',
-    checkout: isSubfolder ? '../checkoutpage/checkout.html' : 'checkoutpage/checkout.html',
+    home: repo + '/home/homepage.html',
+    product: repo + '/productpage/product.html',
+    cart: repo + '/cartpage/cart.html',
+    checkout: repo + '/checkoutpage/checkout.html',
   };
   const SHIPPING = { fee: 100, freeFrom: 3500 };
   const MAX_QTY = 10;
-  const IMAGES = isSubfolder ? '../images/' : 'images/';
+  const IMAGES = repo + '/images/';
   const INSTALLMENT_RATIO = 0.383;
   const KEYS = { cart: 'metro.cart', registry: 'metro.products', recent: 'metro.recent', wishlist: 'metro.wishlist' };
 
   const range = (from, to) => Array.from({ length: to - from + 1 }, (_, i) => String(from + i));
   const CATEGORIES = {
-    women: { label: 'Women', url: isSubfolder ? '../women/women.html' : 'women/women.html', audience: 'women', sizes: range(36, 41) },
-    men: { label: 'Men', url: isSubfolder ? '../men/men.html' : 'men/men.html', audience: 'men', sizes: range(40, 45) },
-    bags: { label: 'Bags', url: isSubfolder ? '../bag/bag.html' : 'bag/bag.html', audience: 'women', sizes: [] },
-    fragrance: { label: 'Fragrance', url: isSubfolder ? '../fragrance/fragrance.html' : 'fragrance/fragrance.html', audience: '', sizes: [] },
-    luxe: { label: 'Luxe Edition', url: isSubfolder ? '../luxe-edition/luxe-edition.html' : 'luxe-edition/luxe-edition.html', audience: 'women', sizes: range(36, 41) },
+    women: { label: 'Women', url: repo + '/women/women.html', audience: 'women', sizes: range(36, 41) },
+    men: { label: 'Men', url: repo + '/men/men.html', audience: 'men', sizes: range(40, 45) },
+    bags: { label: 'Bags', url: repo + '/bag/bag.html', audience: 'women', sizes: [] },
+    fragrance: { label: 'Fragrance', url: repo + '/fragrance/fragrance.html', audience: '', sizes: [] },
+    luxe: { label: 'Luxe Edition', url: repo + '/luxe-edition/luxe-edition.html', audience: 'women', sizes: range(36, 41) },
   };
 
   /* ---- tiny utilities ---- */
@@ -146,7 +135,7 @@ const Metro = (() => {
 
   /* ---- products ---- */
   function product(raw) {
-    const cat = CATEGORIES[raw.category];
+    const cat = CATEGORIES[raw.category] || { label: '', audience: '', url: '#' };
     const colors = raw.colors.map((entry, i) => {
       const [image, label] = entry.split('|');
       const shade = image.match(/_(\d{2})_\d{2}/);
@@ -474,8 +463,8 @@ const Metro = (() => {
   };
   const SEARCH_LINKS = [
     ...Object.values(CATEGORIES),
-    { label: 'Sale', url: isSubfolder ? '../sale/sale.html' : 'sale/sale.html' },
-    { label: 'New in', url: isSubfolder ? '../new-in/new-in.html' : 'new-in/new-in.html' },
+    { label: 'Sale', url: repo + '/sale/sale.html' },
+    { label: 'New in', url: repo + '/new-in/new-in.html' },
   ];
   let catalog = null;
   const getCatalog = () => catalog || (catalog = METRO_CATALOG.map((raw) => product(raw)));
@@ -1058,8 +1047,7 @@ const SECTIONS = {
     },
     {
       "code": "M5",
-      "type": "Footwear",
-      "category": "men",
+      "type": "Footwear","category": "men",
       "price": 5600,
       "payNow": 2120,
       "image": "m55.webp",
